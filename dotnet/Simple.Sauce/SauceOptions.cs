@@ -40,7 +40,7 @@ namespace Sauce.Bindings
         public string BuildName { get; set; }
         public bool CapturePerformance { get; set; }
         public string ChromedriverVersion { get; set; }
-        public Dictionary<string,string> CustomData { get; set; }
+        public Dictionary<string, string> CustomData { get; set; }
         public bool ExtendedDebugging { get; set; }
         public string IeDriverVersion { get; set; }
         public string TestName { get; set; }
@@ -58,6 +58,19 @@ namespace Sauce.Bindings
         public string TunnelIdentifier { get; set; }
         public bool VideoUploadOnPass { get; set; }
 
+        private Dictionary<string, object> GetAuthentication()
+        {
+            var sauceUserName = Environment.GetEnvironmentVariable("SAUCE_USERNAME");
+            var sauceAccessKey = Environment.GetEnvironmentVariable("SAUCE_ACCESS_KEY");
+            var sauceConfiguration = new Dictionary<string, object>
+            {
+                ["username"] = sauceUserName,
+                ["accessKey"] = sauceAccessKey
+            };
+
+            return sauceConfiguration;
+        }
+
         public void WithEdge()
         {
             WithEdge(EdgeVersion.Latest);
@@ -70,17 +83,20 @@ namespace Sauce.Bindings
                                                 edgeVersion);
             ConfiguredEdgeOptions.BrowserVersion = edgeVersion.Value;
             ConfiguredEdgeOptions.PlatformName = DEFAULT_PLATFORM;
+            ConfiguredEdgeOptions.AddAdditionalOption("sauce:options", GetAuthentication());
         }
 
         public void WithChrome()
         {
             ConfiguredChromeOptions.BrowserVersion = DEFAULT_BROWSER_VERSION;
             ConfiguredChromeOptions.PlatformName = DEFAULT_PLATFORM;
+            ConfiguredChromeOptions.AddAdditionalOption("sauce:options", GetAuthentication());
         }
 
         public void WithChrome(string chromeVersion)
         {
             ConfiguredChromeOptions.BrowserVersion = chromeVersion;
+            ConfiguredChromeOptions.AddAdditionalOption("sauce:options", GetAuthentication());
         }
 
         public void WithSafari()
@@ -92,6 +108,7 @@ namespace Sauce.Bindings
         {
             ConfiguredSafariOptions.BrowserVersion = safariVersion;
             ConfiguredSafariOptions.PlatformName = MatchCorrectPlatformToBrowserVersion(safariVersion);
+            ConfiguredSafariOptions.AddAdditionalOption("sauce:options", GetAuthentication());
         }
 
         public string MatchCorrectPlatformToBrowserVersion(string safariBrowserVersion)
@@ -132,6 +149,7 @@ namespace Sauce.Bindings
         {
             ConfiguredFirefoxOptions.BrowserVersion = version;
             ConfiguredFirefoxOptions.PlatformName = DEFAULT_PLATFORM;
+            ConfiguredFirefoxOptions.AddAdditionalOption("sauce:options", GetAuthentication());
         }
     }
 }
