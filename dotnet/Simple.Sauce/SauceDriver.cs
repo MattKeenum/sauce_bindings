@@ -31,13 +31,6 @@ namespace Sauce.Bindings
             return _driver;
         }
 
-        public ICapabilities Capabilities
-        {
-            get { return ((RemoteWebDriver)_driver).Capabilities; }
-        }
-
-
-
         public object ExecuteScript(string script, params object[] args)
         {
             return ((IJavaScriptExecutor)_driver).ExecuteScript(script, args);
